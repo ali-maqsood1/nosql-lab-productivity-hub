@@ -375,8 +375,31 @@ async function searchNotes(db, ownerId, tags, projectId) {
  *       $unwind turns a 1-element array into the element itself.
  */
 async function projectTaskSummary(db, ownerId) {
-  // TODO: implement
-  throw new Error('projectTaskSummary not implemented');
+  return db.collection('tasks').aggregate([
+    { $match: { ownerId } },
+    { $group: {
+        _id: '$projectId',
+        todo:       { $sum: { $cond: [{ $eq: ['$status', 'todo'] },        1, 0] } },
+        inProgress: { $sum: { $cond: [{ $eq: ['$status', 'in-progress'] }, 1, 0] } },
+        done:       { $sum: { $cond: [{ $eq: ['$status', 'done'] },        1, 0] } },
+        total:      { $sum: 1 }
+    }},
+    { $lookup: {
+        from: 'projects',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'project'
+    }},
+    { $unwind: '$project' },
+    { $project: {
+        _id: 1,
+        projectName: '$project.name',
+        todo: 1,
+        inProgress: 1,
+        done: 1,
+        total: 1
+    }}
+  ]).toArray();
 }
 
 /**
