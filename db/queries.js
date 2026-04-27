@@ -67,8 +67,7 @@ async function signupUser(db, userData) {
  * Hint: findOne with an exact-match filter.
  */
 async function loginFindUser(db, email) {
-  // TODO: implement
-  throw new Error('loginFindUser not implemented');
+  return db.collection('users').findOne({ email });
 }
 
 /**
