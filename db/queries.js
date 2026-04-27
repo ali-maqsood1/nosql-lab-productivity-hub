@@ -375,7 +375,7 @@ async function searchNotes(db, ownerId, tags, projectId) {
  *       $unwind turns a 1-element array into the element itself.
  */
 async function projectTaskSummary(db, ownerId) {
-  return db.collection('tasks').aggregate([
+  const result = await db.collection('tasks').aggregate([
     { $match: { ownerId } },
     { $group: {
         _id: '$projectId',
@@ -400,6 +400,8 @@ async function projectTaskSummary(db, ownerId) {
         total: 1
     }}
   ]).toArray();
+  console.log('projectTaskSummary result:', result);
+  return result;
 }
 
 /**
