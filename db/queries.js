@@ -86,8 +86,10 @@ async function loginFindUser(db, email) {
  * Hint: find with two filter conditions, then .sort().toArray().
  */
 async function listUserProjects(db, ownerId) {
-  // TODO: implement
-  throw new Error('listUserProjects not implemented');
+  return db.collection('projects')
+    .find({ ownerId, archived: false })
+    .sort({ createdAt: -1 })
+    .toArray();
 }
 
 /**
